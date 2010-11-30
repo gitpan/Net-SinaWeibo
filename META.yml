@@ -1,5 +1,5 @@
 ---
-abstract: 'A simple and lightweight OAuth api for SinaWeibo(新浪微博)'
+abstract: 'A simple and lightweight OAuth api for SinaWeibo'
 author:
   - 'Pan Fan(nightsailer) <nightsailer@gmail.com>'
 build_requires:
@@ -20,4 +20,4 @@ requires:
 resources:
   bugtracker: http://github.com/nightsailer/net-sinaweibo/issues
   repository: git://github.com/nightsailer/net-sinaweibo.git
-version: 0.001
+version: 0.002

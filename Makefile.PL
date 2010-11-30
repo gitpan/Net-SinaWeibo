@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.31;
 
 
 my %WriteMakefileArgs = (
-  'ABSTRACT' => 'A simple and lightweight OAuth api for SinaWeibo(新浪微博)',
+  'ABSTRACT' => 'A simple and lightweight OAuth api for SinaWeibo',
   'AUTHOR' => 'Pan Fan(nightsailer) <nightsailer@gmail.com>',
   'BUILD_REQUIRES' => {
     'Test::More' => '0.9'
@@ -26,7 +26,7 @@ my %WriteMakefileArgs = (
     'JSON' => '0',
     'OAuth::Lite' => '1.27'
   },
-  'VERSION' => '0.001',
+  'VERSION' => '0.002',
   'test' => {
     'TESTS' => 't/*.t'
   }

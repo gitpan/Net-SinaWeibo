@@ -1,6 +1,6 @@
 package Net::SinaWeibo::OAuth;
 BEGIN {
-  $Net::SinaWeibo::OAuth::VERSION = '0.001';
+  $Net::SinaWeibo::OAuth::VERSION = '0.002';
 }
 # ABSTRACT: Internal OAuth wrapper round OAuth::Lite::Consumer
 use strict;
@@ -226,7 +226,7 @@ Net::SinaWeibo::OAuth - Internal OAuth wrapper round OAuth::Lite::Consumer
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
