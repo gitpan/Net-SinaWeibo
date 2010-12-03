@@ -1,6 +1,6 @@
 package Net::SinaWeibo;
 BEGIN {
-  $Net::SinaWeibo::VERSION = '0.002';
+  $Net::SinaWeibo::VERSION = '0.003';
 }
 # ABSTRACT: A simple and lightweight OAuth api for SinaWeibo
 use strict;
@@ -372,7 +372,7 @@ Net::SinaWeibo - A simple and lightweight OAuth api for SinaWeibo
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
@@ -418,7 +418,7 @@ version 0.002
 
     # now you can retrieve any restricted resources.
     my $friends = $client->friends;
-    # any api can pass amy specific parameters
+    # any api can pass any specific parameters
     my $latest_mentions = $client->mentions since_id => 25892384,count => 10,page => 1;
     # upload also support.
     my $ok = $client->upload(status => 'Hello,this first image file', pic => 'images/demo.jpg');
@@ -428,7 +428,7 @@ version 0.002
 
 =head1 DESCRIPTION
 
-This is a lite OAuth client for SinaWeibo(新浪微博). 
+This is a lite OAuth client for SinaWeibo(http://t.sina.com.cn/).
 
 =encoding utf-8
 
@@ -442,7 +442,7 @@ This is a lite OAuth client for SinaWeibo(新浪微博).
         # optional,you can pass access_token/request_token
         tokens => {
             access_token => 'xxxxxx',
-            access_secret => 'xxxxxxxx',
+            access_token_secret => 'xxxxxxxx',
             # or
             request_token => 'xxxxxxx',
             request_token_secret => 'xxxxx',
@@ -463,17 +463,11 @@ Url which service provider redirect end-user to after authorization.
 
 Get the URL to authorize a user as a URI object.
 
-=head2 verifier [verifier]
-
-Returns the current oauth_verifier.
-
-Can optionally set a new verifier.
-
 =head2 get_request_token
 
 Request the request token and request token secret for this user.
 
-This is called automatically by C<get_authorization_url> if necessary.
+This is called automatically by C<get_authorize_url> if necessary.
 
 =head2 get_access_token(%params)
 
@@ -524,6 +518,15 @@ C<new()>.
 
 Returns an empty hash if the file doesn't exist.
 
+=head2 last_api_error_code
+
+Get last api error_code, which return by provider. If provider reponse is
+not valid JSON message, it's just the http status code.
+
+=head2 last_api_error_subcode
+
+Get detail error code about the api error (like 400 serial).
+
 =head2 save_tokens <file> [token[s] hash]
 
     Net::SinaWeibo->save_tokens(
@@ -534,6 +537,7 @@ Returns an empty hash if the file doesn't exist.
         _access_token => 'xxxxx',
         _access_secret => 'xxxxx,
     )
+
 A convenience method to save a hash of tokens out to the given file.
 
 =head1 SinaWeibo API METHODS
@@ -585,11 +589,8 @@ L<http://open.t.sina.com.cn/wiki/index.php/Statuses/user_timeline>
 获取@当前用户的微博列表
 
     since_id. 可选参数. 返回ID比数值since_id大（比since_id时间晚的）的提到。
-
     max_id. 可选参数. 返回ID不大于max_id(时间不晚于max_id)的提到。
-
     count. 可选参数. 每次返回的最大记录数（即页面大小），不大于200，默认为20。
-
     page. 可选参数. 返回结果的页序号。注意：有分页限制。
 
 L<http://open.t.sina.com.cn/wiki/index.php/Statuses/mentions>
@@ -747,6 +748,7 @@ L<http://open.t.sina.com.cn/wiki/index.php/Statuses/comment>
     id. 必须参数. 要删除的评论ID.
 
 如果评论不存在，将返回403错误.
+
 L<http://open.t.sina.com.cn/wiki/index.php/Statuses/comment_destroy>
 
 =head2 batch_remove_comments
@@ -771,9 +773,8 @@ L<http://open.t.sina.com.cn/wiki/index.php/Statuses/reply>
 
 获取系统推荐用户
 
-L<http://open.t.sina.com.cn/wiki/index.php/Users/hot>
-
     category: 分类，可选参数，返回某一类别的推荐用户，默认为 default。如果不在一下分类中，返回空列表：
+
         default:人气关注
         ent:影视名星
         hk_famous:港台名人
@@ -787,6 +788,8 @@ L<http://open.t.sina.com.cn/wiki/index.php/Users/hot>
         moderator:主持人
         medium:媒体总编
         stockplayer:炒股高手
+
+L<http://open.t.sina.com.cn/wiki/index.php/Users/hot>
 
 =head2 show_user
 
@@ -904,6 +907,7 @@ L<http://open.t.sina.com.cn/wiki/index.php/Friendships/destroy>
 获取两个用户关系的详细情况
 
 以下参数可不填写，如不填，则取当前用户
+
     source_id. 源用户UID
     source_screen_name. 源微博昵称
 
@@ -935,11 +939,11 @@ L<http://open.t.sina.com.cn/wiki/index.php/Friends/ids>
 
 获取用户粉丝对象uid列表
 
-id. 用户UID或微博昵称。
-user_id. 指定用户UID,主要是用来区分用户UID跟微博昵称一样，产生歧义的时候，特别是在用户账号为数字导致和用户Uid发生歧义
-screen_name. 指定微博昵称，主要是用来区分用户UID跟微博昵称一样，产生歧义的时候。
-cursor. 选填参数. 单页只能包含100个关注列表，为了获取更多则cursor默认从-1开始，通过增加或减少cursor来获取更多, 如果没有下一页，则next_cursor返回0
-count. 可选参数. 每次返回的最大记录数（即页面大小），不大于200,默认返回20。
+    id. 用户UID或微博昵称。
+    user_id. 指定用户UID,主要是用来区分用户UID跟微博昵称一样，产生歧义的时候，特别是在用户账号为数字导致和用户Uid发生歧义
+    screen_name. 指定微博昵称，主要是用来区分用户UID跟微博昵称一样，产生歧义的时候。
+    cursor. 选填参数. 单页只能包含100个关注列表，为了获取更多则cursor默认从-1开始，通过增加或减少cursor来获取更多, 如果没有下一页，则next_cursor返回0
+    count. 可选参数. 每次返回的最大记录数（即页面大小），不大于200,默认返回20。
 
 如果没有提供cursor参数，将只返回最前面的5000个粉丝id
 
@@ -1137,7 +1141,11 @@ L<http://open.t.sina.com.cn/wiki/index.php/Favorites/destroy_batch>
 
 The latest code for this module can be found at
 
-    L<http://github.com/nightsailer/net-sinaweibo.git>
+L<http://github.com/nightsailer/net-sinaweibo.git>
+
+Author blog: (Chinese)
+
+L<http://nightsailer.com/>
 
 =head1 SUPPORT
 
@@ -1149,7 +1157,9 @@ You can also look for information at:
 
 =over
 
-=item Issues tracker: L<http://github.com/nightsailer/net-sinaweibo/issues>
+=item Issues tracker: 
+
+L<http://github.com/nightsailer/net-sinaweibo/issues>
 
 =back
 
@@ -1161,13 +1171,11 @@ You can also look for information at:
 
 L<http://open.t.sina.com.cn/wiki/>
 
-=item OAuth
+=item OAuth L<http://oauth.net/>
 
-L<http://oauth.net/>
+=item L<OAuth::Lite>
 
 =item L<Net::OAuth>
-
-=item L<Net::OAuth::Simple>
 
 =back
 
@@ -1186,5 +1194,6 @@ the same terms as the Perl 5 programming language system itself.
 
 
 __END__
+
 
 

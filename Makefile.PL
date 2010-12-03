@@ -26,7 +26,7 @@ my %WriteMakefileArgs = (
     'JSON' => '0',
     'OAuth::Lite' => '1.27'
   },
-  'VERSION' => '0.002',
+  'VERSION' => '0.003',
   'test' => {
     'TESTS' => 't/*.t'
   }

@@ -1,6 +1,6 @@
 package Net::SinaWeibo::OAuth;
 BEGIN {
-  $Net::SinaWeibo::OAuth::VERSION = '0.002';
+  $Net::SinaWeibo::OAuth::VERSION = '0.003';
 }
 # ABSTRACT: Internal OAuth wrapper round OAuth::Lite::Consumer
 use strict;
@@ -23,6 +23,8 @@ use constant {
 __PACKAGE__->mk_accessors(qw(
     last_api
     last_api_error
+    last_api_error_code
+    last_api_error_subcode
 ));
 sub new {
     my ($class,%args) = @_;
@@ -46,6 +48,9 @@ sub new {
             secret => $tokens->{access_token_secret},
             ));
     }
+    if ($tokens->{verifier}) {
+        $self->verifier($tokens->{verifier});
+    }
     $self;
 }
 
@@ -67,18 +72,28 @@ sub make_restricted_request {
         );
     my $content = $res->decoded_content || $res->content;
     unless ($res->is_success) {
-        $self->_api_error($content);
+        $self->_api_error($content,$res->code);
         croak $content;
     }
     decode_json($content);
 }
 sub _api_error {
-    my ($self,$error) = @_;
+    my ($self,$error,$http_code) = @_;
     eval {
-        $self->last_api_error(decode_json($error));
+        my $error = decode_json($error);
+        $self->last_api_error($error);
+        $self->last_api_error_code($error->{error_code}) if $error->{error_code};
+        if ($error->{error} =~ /^(\d+):.*/) {
+            $self->last_api_error_subcode($1);
+        }
+        else {
+            $self->last_api_error_subcode(0);
+        }
     };
     if ($@) {
         $self->last_api_error($error);
+        $self->last_api_error_code($http_code);
+        $self->last_api_error_subcode(0);
     }
 }
 
@@ -226,7 +241,7 @@ Net::SinaWeibo::OAuth - Internal OAuth wrapper round OAuth::Lite::Consumer
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 

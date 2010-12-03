@@ -13,4 +13,5 @@ t/00oauth.t
 t/01oauth.t
 t/api.t
 t/author-critic.t
+t/basic.t
 t/release-pod-syntax.t

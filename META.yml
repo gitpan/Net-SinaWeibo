@@ -20,4 +20,4 @@ requires:
 resources:
   bugtracker: http://github.com/nightsailer/net-sinaweibo/issues
   repository: git://github.com/nightsailer/net-sinaweibo.git
-version: 0.002
+version: 0.003
